@@ -47,31 +47,31 @@
 | Subnet | `subred-web` |
 | Public IPv4 address | Activada |
 
-3. En **Add SSH keys** seleccionar **Generate a key pair for me**, descargar la llave privada y renombrarla `llave-taller.key`.
+3. En **Add SSH keys** seleccionar **Generate a key pair for me**, descargar la llave privada y renombrarla `llave-web.key`.
 4. Pulsar **Create**. Con `VM.Standard.E4.Flex` la consola respondió **Out of capacity for shape VM.Standard.E4.Flex in availability domain AD-1**: la región no tenía capacidad disponible para ese tipo de máquina. Se volvió a la sección **Image and shape**, se cambió a `VM.Standard.E5.Flex` y se creó sin errores.
 5. Esperar el estado **Running** y copiar la **IP pública** de la instancia: `144.22.176.5`.
 
-![Paso 1 - Error de capacidad](capturas/01b-error-capacidad.png)
-![Paso 1 - Formulario de creación](capturas/01-crear-vm.png)
-![Paso 1 - Instancia en Running](capturas/02-vm-running.png)
+![Paso 1 - Error de capacidad con E4.Flex](01-error-capacidad.png)
+
+![Paso 1 - servidor-taller en estado Running](02-vm-running.png)
 
 ---
 
 ## 2. Conectarse por SSH desde Cloud Shell
 
 1. En la barra superior de OCI abrir **Cloud Shell** y elegir la red **Public Network**.
-2. En el menú de Cloud Shell, usar **Upload** para subir `llave-taller.key`.
+2. En el menú de Cloud Shell, usar **Upload** para subir `llave-web.key`.
 3. Ejecutar:
 
 ```bash
-chmod 600 ~/llave-taller.key
-ssh -i ~/llave-taller.key opc@144.22.176.5
+chmod 600 ~/llave-web.key
+ssh -i ~/llave-web.key opc@144.22.176.5
 whoami
 ```
 
 Escribir `yes` cuando pregunte por la huella del servidor. `whoami` debe responder `opc`.
 
-![Paso 2 - Conexión SSH](capturas/03-ssh.png)
+![Paso 2 - Conexión SSH desde Cloud Shell](03-ssh.png)
 
 ---
 
@@ -85,7 +85,7 @@ sudo systemctl status nginx
 
 El estado debe aparecer como **active (running)**. Salir del status con `q`.
 
-![Paso 3 - Nginx activo](capturas/04-nginx-status.png)
+![Paso 3 - Instalación de Nginx y servicio activo](04-nginx.png)
 
 ---
 
@@ -101,7 +101,7 @@ sudo firewall-cmd --list-services
 
 La lista debe incluir `http`. Abrir `http://144.22.176.5` en el navegador: debe aparecer la página de prueba de Nginx.
 
-![Paso 4 - Página por defecto de Nginx](capturas/05-welcome-nginx.png)
+La salida de estos comandos aparece en la captura del paso 5 (`success`, `success` y `dhcpv6-client http ssh`).
 
 ---
 
@@ -146,8 +146,9 @@ sudo cp index.html styles.css script.js /usr/share/nginx/html/
 sudo restorecon -Rv /usr/share/nginx/html
 ```
 
-![Paso 5 - Clonación y archivos copiados](capturas/06-archivos.png)
-![Paso 5 - Página publicada por IP](capturas/07-pagina-ip.png)
+![Paso 5 - Clonación, copia de archivos y firewall](05-clonar-copiar-firewall.png)
+
+![Paso 5 - Página publicada por IP](06-pagina-ip.png)
 
 ---
 
@@ -164,8 +165,9 @@ nslookup taller-santiago-erick-cloud.duckdns.org
 
 La respuesta muestra `Address: 144.22.176.5`, es decir, el subdominio apunta a la máquina.
 
-![Paso 6 - Subdominio en DuckDNS](capturas/08-duckdns.png)
-![Paso 6 - nslookup](capturas/09-nslookup.png)
+![Paso 6 - Subdominio en DuckDNS](07-duckdns.png)
+
+![Paso 6 - nslookup del subdominio](09-nslookup.png)
 
 ---
 
@@ -175,8 +177,9 @@ La respuesta muestra `Address: 144.22.176.5`, es decir, el subdominio apunta a l
 2. Abrir la misma dirección desde un celular con datos móviles (red externa a la VM).
 3. Probar las funcionalidades: menú en móvil, modo oscuro, filtro de proyectos y formulario.
 
-![Paso 7 - Sitio en el PC](capturas/10-sitio-pc.png)
-![Paso 7 - Sitio en el celular](capturas/11-sitio-movil.png)
+![Paso 7 - Sitio en el PC](08-sitio-pc.png)
+
+![Paso 7 - Sitio en el celular con datos móviles](10-sitio-movil.png)
 
 ---
 
