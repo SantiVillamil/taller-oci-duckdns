@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mariangel Perilla | Portafolio</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header class="nav">
+    <a href="#inicio" class="logo">MP<span>.</span></a>
+    <button class="menu-btn" id="menuBtn" aria-label="Abrir menú">☰</button>
+    <nav id="menu">
+      <a href="#inicio">Inicio</a>
+      <a href="#sobre-mi">Sobre mí</a>
+      <a href="#proyectos">Proyectos</a>
+      <a href="#contacto">Contacto</a>
+      <button id="themeBtn" class="theme-btn" aria-label="Cambiar tema">🌙</button>
+    </nav>
+  </header>
+
+  <main>
+    <!-- SECCIÓN 1: INICIO -->
+    <section id="inicio" class="hero">
+      <div class="hero-text">
+        <p class="tag">Ingeniería de Software · Uniempresarial</p>
+        <h1>Hola, soy <span class="grad">Mariangel Perilla</span></h1>
+        <p class="typed">Me gusta construir <span id="typed"></span><span class="cursor">|</span></p>
+        <a href="#proyectos" class="btn">Ver proyectos</a>
+      </div>
+      <img src="img/hero.svg" alt="Ilustración de código" class="hero-img">
+    </section>
+
+    <!-- SECCIÓN 2: SOBRE MÍ -->
+    <section id="sobre-mi" class="section">
+      <h2>Sobre mí</h2>
+      <p class="lead">Estudiante de quinto semestre de Ingeniería de Software. He trabajado en transformación digital, análisis de datos e integración de sistemas. Esta página está publicada en una máquina virtual de <strong>Oracle Cloud (OCI)</strong> con <strong>Nginx</strong> y un subdominio de <strong>DuckDNS</strong>.</p>
+      <div class="skills">
+        <span>HTML / CSS / JS</span><span>Angular</span><span>Ionic</span><span>SQL Server</span>
+        <span>PostgreSQL</span><span>Power BI</span><span>Salesforce</span><span>n8n</span><span>OCI</span><span>Nginx</span>
+      </div>
+      <div class="stats">
+        <div><strong class="counter" data-target="5">0</strong><p>Semestre</p></div>
+        <div><strong class="counter" data-target="2">0</strong><p>Prácticas</p></div>
+        <div><strong class="counter" data-target="10">0</strong><p>Proyectos</p></div>
+      </div>
+    </section>
+
+    <!-- SECCIÓN 3: PROYECTOS -->
+    <section id="proyectos" class="section">
+      <h2>Proyectos</h2>
+      <div class="filters">
+        <button class="filter active" data-cat="todos">Todos</button>
+        <button class="filter" data-cat="cloud">Cloud</button>
+        <button class="filter" data-cat="movil">Móvil</button>
+        <button class="filter" data-cat="datos">Datos</button>
+      </div>
+      <div class="grid">
+        <article class="card" data-cat="cloud">
+          <img src="img/cloud.svg" alt="Nube">
+          <h3>Despliegue web en OCI</h3>
+          <p>VM en Oracle Cloud con Nginx, red virtual propia y subdominio DuckDNS.</p>
+        </article>
+        <article class="card" data-cat="movil">
+          <img src="img/mobile.svg" alt="App móvil">
+          <h3>App de rutinas de gimnasio</h3>
+          <p>Aplicación móvil con rutinas personalizadas para el gimnasio de la universidad.</p>
+        </article>
+        <article class="card" data-cat="datos">
+          <img src="img/data.svg" alt="Gráfico de barras">
+          <h3>Dashboards en Power BI</h3>
+          <p>Tableros de seguimiento con modelo de datos y medidas DAX.</p>
+        </article>
+        <article class="card" data-cat="cloud">
+          <img src="img/auto.svg" alt="Flujo automatizado">
+          <h3>Bot de WhatsApp con n8n</h3>
+          <p>Automatización de mensajes integrada con Salesforce.</p>
+        </article>
+      </div>
+    </section>
+
+    <!-- SECCIÓN 4: CONTACTO -->
+    <section id="contacto" class="section">
+      <h2>Contacto</h2>
+      <form id="form" class="form">
+        <input type="text" id="nombre" placeholder="Tu nombre" required>
+        <input type="email" id="correo" placeholder="Tu correo" required>
+        <textarea id="mensaje" rows="4" placeholder="Escribe tu mensaje" required></textarea>
+        <button type="submit" class="btn">Enviar</button>
+        <p id="formMsg" class="form-msg"></p>
+      </form>
+    </section>
+  </main>
+
+  <footer>
+    <p>© <span id="year"></span> Mariangel Perilla · Cloud Computing 2026-2 · Servido con Nginx en OCI</p>
+  </footer>
+
+  <button id="topBtn" class="top-btn" aria-label="Volver arriba">↑</button>
+  <script src="script.js"></script>
+</body>
+</html>
