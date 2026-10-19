@@ -1,6 +1,6 @@
 # Publicación web en OCI con Nginx y DuckDNS
 
-**Estudiante:** Mariangel Perilla Rangel
+**Estudiante:** David Santiago Camacho Villamil - Erick Leandro Criollo Marulanda
 **Asignatura:** Cloud Computing 2026-2 · Uniempresarial
 **Sitio publicado:** http://SUBDOMINIO.duckdns.org
 
