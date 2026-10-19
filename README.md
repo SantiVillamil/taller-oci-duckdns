@@ -1,8 +1,10 @@
 # Publicación web en OCI con Nginx y DuckDNS
 
-**Estudiante:** David Santiago Camacho Villamil - Erick Leandro Criollo Marulanda
+**Estudiantes:** David Santiago Camacho Villamil · Erick Leandro Criollo Marulanda
+
 **Asignatura:** Cloud Computing 2026-2 · Uniempresarial
-**Sitio publicado:** http://SUBDOMINIO.duckdns.org
+
+**Sitio publicado:** http://taller-santiago-erick-cloud.duckdns.org
 
 > Esta guía reutiliza la red creada en el Taller 1 (`red-infraestructura`, `subred-web`, puertos 22 y 80 abiertos) y crea una **máquina virtual nueva** para publicar una página web propia con Nginx y un subdominio de DuckDNS.
 
@@ -40,15 +42,16 @@
 | Name | `servidor-taller` |
 | Compartment | `Infraestructura_y_Cloud` |
 | Image | Oracle Linux 9 |
-| Shape | `VM.Standard.E4.Flex` (o `E5.Flex`): 1 OCPU, 2 GB de memoria |
+| Shape | `VM.Standard.E5.Flex`, 1 OCPU |
 | VCN | `red-infraestructura` |
 | Subnet | `subred-web` |
 | Public IPv4 address | Activada |
 
 3. En **Add SSH keys** seleccionar **Generate a key pair for me**, descargar la llave privada y renombrarla `llave-taller.key`.
-4. Pulsar **Create** y esperar el estado **Running**.
-5. Copiar la **IP pública** de la instancia: `IP_PUBLICA`.
+4. Pulsar **Create**. Con `VM.Standard.E4.Flex` la consola respondió **Out of capacity for shape VM.Standard.E4.Flex in availability domain AD-1**: la región no tenía capacidad disponible para ese tipo de máquina. Se volvió a la sección **Image and shape**, se cambió a `VM.Standard.E5.Flex` y se creó sin errores.
+5. Esperar el estado **Running** y copiar la **IP pública** de la instancia: `144.22.176.5`.
 
+![Paso 1 - Error de capacidad](capturas/01b-error-capacidad.png)
 ![Paso 1 - Formulario de creación](capturas/01-crear-vm.png)
 ![Paso 1 - Instancia en Running](capturas/02-vm-running.png)
 
@@ -62,7 +65,7 @@
 
 ```bash
 chmod 600 ~/llave-taller.key
-ssh -i ~/llave-taller.key opc@IP_PUBLICA
+ssh -i ~/llave-taller.key opc@144.22.176.5
 whoami
 ```
 
@@ -96,7 +99,7 @@ sudo firewall-cmd --reload
 sudo firewall-cmd --list-services
 ```
 
-La lista debe incluir `http`. Abrir `http://IP_PUBLICA` en el navegador: debe aparecer la página de prueba de Nginx.
+La lista debe incluir `http`. Abrir `http://144.22.176.5` en el navegador: debe aparecer la página de prueba de Nginx.
 
 ![Paso 4 - Página por defecto de Nginx](capturas/05-welcome-nginx.png)
 
@@ -104,47 +107,62 @@ La lista debe incluir `http`. Abrir `http://IP_PUBLICA` en el navegador: debe ap
 
 ## 5. Publicar la página web propia
 
-La página tiene 4 secciones (Inicio, Sobre mí, Proyectos, Contacto), imágenes, CSS adaptable a móviles (`@media`) y funcionalidades en JavaScript (menú hamburguesa, modo oscuro, texto animado, contadores, filtro de proyectos y validación del formulario). Está en la carpeta `sitio/` de este repositorio:
+La página tiene 4 secciones (Inicio, Sobre mí, Proyectos, Contacto), imágenes SVG, CSS adaptable a móviles (`@media`) y funcionalidades en JavaScript (menú hamburguesa, modo oscuro, texto animado, contadores, filtro de proyectos y validación del formulario).
 
-```
-sitio/
-├── index.html
-├── styles.css
-├── script.js
-└── img/
-```
+Archivos del repositorio:
 
-En la VM, clonar este repositorio y copiar la página a la carpeta que sirve Nginx:
+| Archivo | Contenido |
+|---|---|
+| `index.html` | Estructura de la página |
+| `styles.css` | Estilos y diseño responsive |
+| `script.js` | Funcionalidades en JavaScript |
+| `*.svg` | Imágenes de la página |
+
+En la VM, clonar este repositorio y copiar la página a la carpeta que sirve Nginx (`/usr/share/nginx/html`). Las imágenes van en la subcarpeta `img/`, que es la ruta que usa `index.html`:
 
 ```bash
-git clone https://github.com/USUARIO/REPOSITORIO.git
+git clone https://github.com/SantiVillamil/taller-oci-duckdns.git
+cd ~/taller-oci-duckdns
+ls
+
 sudo rm -rf /usr/share/nginx/html/*
-sudo cp -r REPOSITORIO/sitio/* /usr/share/nginx/html/
+sudo mkdir -p /usr/share/nginx/html/img
+sudo cp index.html styles.css script.js /usr/share/nginx/html/
+sudo cp *.svg /usr/share/nginx/html/img/
 sudo restorecon -Rv /usr/share/nginx/html
-ls -la /usr/share/nginx/html
+ls -R /usr/share/nginx/html
 ```
 
 `restorecon` aplica la etiqueta de SELinux correcta a los archivos; sin ese paso Nginx puede responder **403 Forbidden**.
 
-Recargar `http://IP_PUBLICA`.
+Abrir `http://144.22.176.5` en el navegador.
 
-![Paso 5 - Archivos copiados](capturas/06-archivos.png)
+Para publicar cambios posteriores en la página, se editan en GitHub y se actualizan en la VM:
+
+```bash
+cd ~/taller-oci-duckdns
+git pull
+sudo cp index.html styles.css script.js /usr/share/nginx/html/
+sudo restorecon -Rv /usr/share/nginx/html
+```
+
+![Paso 5 - Clonación y archivos copiados](capturas/06-archivos.png)
 ![Paso 5 - Página publicada por IP](capturas/07-pagina-ip.png)
 
 ---
 
 ## 6. Configurar el subdominio en DuckDNS
 
-1. Ingresar a https://www.duckdns.org e iniciar sesión (Google o GitHub).
-2. En **sub domain** escribir `SUBDOMINIO` y pulsar **add domain**.
-3. En **current ip** escribir `IP_PUBLICA` y pulsar **update ip**.
-4. Verificar la resolución desde el PC:
+1. Ingresar a https://www.duckdns.org e iniciar sesión con la cuenta de GitHub.
+2. En **sub domain** escribir `taller-santiago-erick-cloud` y pulsar **add domain**.
+3. En **current ip** escribir `144.22.176.5` y pulsar **update ip**.
+4. Verificar la resolución desde Cloud Shell:
 
 ```bash
-nslookup SUBDOMINIO.duckdns.org
+nslookup taller-santiago-erick-cloud.duckdns.org
 ```
 
-La respuesta debe mostrar `IP_PUBLICA`.
+La respuesta muestra `Address: 144.22.176.5`, es decir, el subdominio apunta a la máquina.
 
 ![Paso 6 - Subdominio en DuckDNS](capturas/08-duckdns.png)
 ![Paso 6 - nslookup](capturas/09-nslookup.png)
@@ -153,7 +171,7 @@ La respuesta debe mostrar `IP_PUBLICA`.
 
 ## 7. Pruebas desde un navegador externo
 
-1. Abrir `http://SUBDOMINIO.duckdns.org` desde el navegador del PC.
+1. Abrir `http://taller-santiago-erick-cloud.duckdns.org` desde el navegador del PC.
 2. Abrir la misma dirección desde un celular con datos móviles (red externa a la VM).
 3. Probar las funcionalidades: menú en móvil, modo oscuro, filtro de proyectos y formulario.
 
@@ -166,7 +184,8 @@ La respuesta debe mostrar `IP_PUBLICA`.
 
 | Elemento | Valor |
 |---|---|
-| Máquina virtual | `servidor-taller` |
-| IP pública | `IP_PUBLICA` |
+| Máquina virtual | `servidor-taller` (Oracle Linux 9, `VM.Standard.E5.Flex`) |
+| IP pública | `144.22.176.5` |
 | Servidor web | Nginx |
-| Subdominio | http://SUBDOMINIO.duckdns.org |
+| Subdominio | http://taller-santiago-erick-cloud.duckdns.org |
+| Repositorio | https://github.com/SantiVillamil/taller-oci-duckdns |
